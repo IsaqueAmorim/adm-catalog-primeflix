@@ -2,7 +2,7 @@ package com.amorim.dev.admin.catalogo;
 
 import com.amorim.dev.admin.catalogo.domain.category.Category;
 import com.amorim.dev.admin.catalogo.domain.exceptions.DomainException;
-import com.amorim.dev.admin.catalogo.domain.validation.validation.ThrowsValidationHandler;
+import com.amorim.dev.admin.catalogo.domain.validation.handler.ThrowsValidationHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

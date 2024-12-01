@@ -1,4 +1,4 @@
-package com.amorim.dev.admin.catalogo.domain.validation.validation;
+package com.amorim.dev.admin.catalogo.domain.validation.handler;
 
 import com.amorim.dev.admin.catalogo.domain.exceptions.DomainException;
 import com.amorim.dev.admin.catalogo.domain.validation.Error;

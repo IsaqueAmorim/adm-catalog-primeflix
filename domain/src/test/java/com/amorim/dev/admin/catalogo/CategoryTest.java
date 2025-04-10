@@ -2,9 +2,12 @@ package com.amorim.dev.admin.catalogo;
 
 import com.amorim.dev.admin.catalogo.domain.category.Category;
 import com.amorim.dev.admin.catalogo.domain.exceptions.DomainException;
-import com.amorim.dev.admin.catalogo.domain.validation.validation.ThrowsValidationHandler;
+import com.amorim.dev.admin.catalogo.domain.validation.handler.ThrowsValidationHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.sql.Time;
+import java.time.Instant;
 
 public class CategoryTest {
 
@@ -24,7 +27,6 @@ public class CategoryTest {
         Assertions.assertEquals(expectedIsActive,actualCategory.isActive());
         Assertions.assertNotNull(actualCategory.getCreatedAt());
         Assertions.assertNull(actualCategory.getDeletedAt());
-
     }
 
     @Test
@@ -163,7 +165,7 @@ public class CategoryTest {
     }
 
     @Test
-    public void givenValidActiveCategory_whenCallDeactivate_thenReturnInactiveCategory() {
+    public void givenValidActiveCategory_whenCallDeactivate_thenReturnInactiveCategory() throws InterruptedException {
         final String expectedName = "Filme";
         final var expectedDescription = "A categoria mais Assistida";
         final var expectedIsActive = false;
@@ -177,6 +179,8 @@ public class CategoryTest {
         Assertions.assertNull(aCategory.getDeletedAt());
 
         final var createdAt = aCategory.getCreatedAt();
+
+        Thread.sleep(100);
         final var actualCategory = aCategory.deactivate();
 
         Assertions.assertDoesNotThrow(() -> actualCategory.validate(new ThrowsValidationHandler()));
@@ -191,7 +195,7 @@ public class CategoryTest {
     }
 
     @Test
-    public void givenValidInactiveCategory_whenCallActivate_thenReturnActiveCategory() {
+    public void givenValidInactiveCategory_whenCallActivate_thenReturnActiveCategory() throws InterruptedException {
         final String expectedName = "Filme";
         final var expectedDescription = "A categoria mais Assistida";
         final var expectedIsActive = true;
@@ -205,6 +209,7 @@ public class CategoryTest {
         Assertions.assertFalse(aCategory.isActive());
         Assertions.assertNotNull(aCategory.getDeletedAt());
 
+        Thread.sleep(100);
         final var actualCategory = aCategory.activate();
 
         Assertions.assertDoesNotThrow(() -> actualCategory.validate(new ThrowsValidationHandler()));
@@ -219,16 +224,31 @@ public class CategoryTest {
     }
 
     @Test
-    public void giverValidCategory_whenCallUpdate_thenReturnCategoryUpdated() {
+    public void givenValidCategory_whenCallUpdate_thenReturnCategoryUpdated() throws InterruptedException {
         final String expectedName = "Filme";
         final var expectedDescription = "A categoria mais Assistida";
         final var expectedIsActive = true;
 
-        final var aCategory = Category.newCategory(expectedName,expectedDescription,false);
+        final var aCategory = Category.newCategory("Film","A categoria",false);
+
+        Assertions.assertDoesNotThrow(() -> aCategory.validate(new ThrowsValidationHandler()));
 
         final var createdAt = aCategory.getCreatedAt();
         final var uptadatedAt = aCategory.getUpdatedAt();
 
+        Thread.sleep(100);
+        final var actualCategory = aCategory.update(expectedName,expectedDescription,expectedIsActive);
+
         Assertions.assertDoesNotThrow(() -> aCategory.validate(new ThrowsValidationHandler()));
+
+        Assertions.assertDoesNotThrow(() -> actualCategory.validate(new ThrowsValidationHandler()));
+        Assertions.assertEquals(aCategory.getId(),actualCategory.getId());
+        Assertions.assertEquals(expectedName,actualCategory.getName());
+        Assertions.assertEquals(expectedDescription,actualCategory.getDescription());
+        Assertions.assertEquals(expectedIsActive,actualCategory.isActive());
+        Assertions.assertNotNull(actualCategory.getCreatedAt());
+        Assertions.assertEquals(createdAt,actualCategory.getCreatedAt());
+        Assertions.assertTrue(actualCategory.getUpdatedAt().isAfter(uptadatedAt));
+        Assertions.assertNull(actualCategory.getDeletedAt());
     }
 }

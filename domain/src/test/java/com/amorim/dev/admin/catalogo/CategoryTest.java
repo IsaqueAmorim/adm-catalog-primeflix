@@ -6,9 +6,6 @@ import com.amorim.dev.admin.catalogo.domain.validation.handler.ThrowsValidationH
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Time;
-import java.time.Instant;
-
 public class CategoryTest {
 
     @Test
@@ -31,20 +28,16 @@ public class CategoryTest {
 
     @Test
     public void givenInvalidNullName_whenCallNewCategoryAndValidate_thenShouldRecivedError() {
-
-        final String expectedName = null;
         final var expectedDescription = "A categoria mais Assistida";
         final var expectedErrorMessage = "'name' should not be null";
         final var expectedErrorCount = 1;
         final var expectedIsActive = true;
 
-        final var actualCategory = Category.newCategory(expectedName,expectedDescription,expectedIsActive);
+        final var actualCategory = Category.newCategory(null,expectedDescription,expectedIsActive);
 
         final var actualException = Assertions.assertThrows(DomainException.class, () -> actualCategory.validate(new ThrowsValidationHandler()));
         Assertions.assertEquals(expectedErrorMessage,actualException.getErrors().get(0).message());
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
-
-
     }
 
     @Test
@@ -172,7 +165,7 @@ public class CategoryTest {
 
         final var aCategory = Category.newCategory(expectedName,expectedDescription,true);
 
-        final var uptadatedAt = aCategory.getUpdatedAt();
+        final var updatedAt = aCategory.getUpdatedAt();
 
         Assertions.assertDoesNotThrow(() -> aCategory.validate(new ThrowsValidationHandler()));
         Assertions.assertTrue(aCategory.isActive());
@@ -190,7 +183,7 @@ public class CategoryTest {
         Assertions.assertEquals(expectedIsActive,actualCategory.isActive());
         Assertions.assertNotNull(actualCategory.getCreatedAt());
         Assertions.assertEquals(createdAt,actualCategory.getCreatedAt());
-        Assertions.assertTrue(actualCategory.getUpdatedAt().isAfter(uptadatedAt));
+        Assertions.assertTrue(actualCategory.getUpdatedAt().isAfter(updatedAt));
         Assertions.assertNotNull(actualCategory.getDeletedAt());
     }
 
@@ -203,7 +196,7 @@ public class CategoryTest {
         final var aCategory = Category.newCategory(expectedName,expectedDescription,false);
 
         final var createdAt = aCategory.getCreatedAt();
-        final var uptadatedAt = aCategory.getUpdatedAt();
+        final var updatedAt = aCategory.getUpdatedAt();
 
         Assertions.assertDoesNotThrow(() -> aCategory.validate(new ThrowsValidationHandler()));
         Assertions.assertFalse(aCategory.isActive());
@@ -219,7 +212,7 @@ public class CategoryTest {
         Assertions.assertEquals(expectedIsActive,actualCategory.isActive());
         Assertions.assertNotNull(actualCategory.getCreatedAt());
         Assertions.assertEquals(createdAt,actualCategory.getCreatedAt());
-        Assertions.assertTrue(actualCategory.getUpdatedAt().isAfter(uptadatedAt));
+        Assertions.assertTrue(actualCategory.getUpdatedAt().isAfter(updatedAt));
         Assertions.assertNull(actualCategory.getDeletedAt());
     }
 
@@ -234,7 +227,7 @@ public class CategoryTest {
         Assertions.assertDoesNotThrow(() -> aCategory.validate(new ThrowsValidationHandler()));
 
         final var createdAt = aCategory.getCreatedAt();
-        final var uptadatedAt = aCategory.getUpdatedAt();
+        final var updatedAt = aCategory.getUpdatedAt();
 
         Thread.sleep(100);
         final var actualCategory = aCategory.update(expectedName,expectedDescription,expectedIsActive);
@@ -248,7 +241,7 @@ public class CategoryTest {
         Assertions.assertEquals(expectedIsActive,actualCategory.isActive());
         Assertions.assertNotNull(actualCategory.getCreatedAt());
         Assertions.assertEquals(createdAt,actualCategory.getCreatedAt());
-        Assertions.assertTrue(actualCategory.getUpdatedAt().isAfter(uptadatedAt));
+        Assertions.assertTrue(actualCategory.getUpdatedAt().isAfter(updatedAt));
         Assertions.assertNull(actualCategory.getDeletedAt());
     }
 }

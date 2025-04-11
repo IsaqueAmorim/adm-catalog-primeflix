@@ -1,5 +1,8 @@
 package com.amorim.dev.admin.catalogo.application.category.update;
 
+import com.amorim.dev.admin.catalogo.application.category.create.CreateCategoryCommand;
+import com.amorim.dev.admin.catalogo.application.update.DefaultUpdateCategoryUseCase;
+import com.amorim.dev.admin.catalogo.application.update.UpdateCategoryCommand;
 import com.amorim.dev.admin.catalogo.domain.category.Category;
 import com.amorim.dev.admin.catalogo.domain.category.CategoryGateway;
 import org.junit.jupiter.api.Assertions;
@@ -63,5 +66,28 @@ public class UpdateCategoryUseCaseTest {
                     && Objects.equals(aCategory.getCreatedAt(), aUpdatedCategory.getCreatedAt())
                     && aCategory.getUpdatedAt().isBefore(aUpdatedCategory.getUpdatedAt())
                     && Objects.isNull(aUpdatedCategory.getDeletedAt())));
+    }
+
+    @Test
+    public void givenAInvalidNullName_whenCallsUpdateCategory_shouldReturnDomainException(){
+
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = true;
+        final var expectedErrorMessage = "'name' should not be null";
+        final var expectedErrorCount = 1;
+
+        final var aCategory = Category.newCategory("Film","A mais assistida",true);
+
+        Mockito.when(categoryGateway.findById(eq(aCategory.getId())))
+                .thenReturn(Optional.of(aCategory));
+
+        final var aCommand = UpdateCategoryCommand.with(aCategory.getId(),null,expectedDescription,expectedIsActive);
+
+        final var notification = useCase.execute(aCommand).getLeft();
+
+        Assertions.assertEquals(expectedErrorCount, notification.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, notification.firstError().message());
+
+        Mockito.verify(categoryGateway, Mockito.times(0)).create(Mockito.any());
     }
 }

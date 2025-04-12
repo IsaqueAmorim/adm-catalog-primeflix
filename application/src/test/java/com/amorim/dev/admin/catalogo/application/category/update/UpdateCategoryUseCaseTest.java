@@ -78,7 +78,7 @@ public class UpdateCategoryUseCaseTest {
 
         final var aCategory = Category.newCategory("Film","A mais assistida",true);
 
-        Mockito.when(categoryGateway.findById(eq(aCategory.getId())))
+        when(categoryGateway.findById(eq(aCategory.getId())))
                 .thenReturn(Optional.of(aCategory));
 
         final var aCommand = UpdateCategoryCommand.with(aCategory.getId(),null,expectedDescription,expectedIsActive);
@@ -88,6 +88,42 @@ public class UpdateCategoryUseCaseTest {
         Assertions.assertEquals(expectedErrorCount, notification.getErrors().size());
         Assertions.assertEquals(expectedErrorMessage, notification.firstError().message());
 
-        Mockito.verify(categoryGateway, Mockito.times(0)).create(Mockito.any());
+        Mockito.verify(categoryGateway, Mockito.times(0)).update(Mockito.any());
+    }
+
+    @Test
+    public void givenAValidInactivateCommand_whenCallUpdateCategory_shouldReturnInactiveCategoryId(){
+        final var expectedName = "Filme";
+        final var expectedDescription = "A categoria mais assistida";
+        final var expectedIsActive = false;
+
+        final var aCategory = Category.newCategory("Filme","A mais assistida",true);
+
+        Assertions.assertTrue(aCategory.isActive());
+        Assertions.assertNull(aCategory.getDeletedAt());
+
+        when(categoryGateway.findById(eq(aCategory.getId())))
+                .thenReturn(Optional.of(aCategory));
+
+        when(categoryGateway.update(any()))
+                .thenAnswer(returnsFirstArg());
+
+        final var aCommand = UpdateCategoryCommand.with(aCategory.getId(),"Filme",expectedDescription,expectedIsActive);
+
+        useCase.execute(aCommand);
+
+        Assertions.assertFalse(aCategory.isActive());
+        Assertions.assertNotNull(aCategory.getDeletedAt());
+
+        Mockito.verify(categoryGateway, Mockito.times(1))
+                .update(Mockito.argThat(aCategoryUpdated -> {
+                    return Objects.equals(expectedName, aCategoryUpdated.getName())
+                            && Objects.equals(expectedDescription, aCategoryUpdated.getDescription())
+                            && Objects.equals(expectedIsActive, aCategoryUpdated.isActive())
+                            && Objects.nonNull(aCategoryUpdated.getId())
+                            && Objects.nonNull(aCategoryUpdated.getCreatedAt())
+                            && Objects.nonNull(aCategoryUpdated.getUpdatedAt())
+                            && Objects.nonNull(aCategoryUpdated.getDeletedAt());
+                }));
     }
 }

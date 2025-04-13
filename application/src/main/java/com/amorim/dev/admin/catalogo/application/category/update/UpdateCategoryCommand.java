@@ -1,4 +1,4 @@
-package com.amorim.dev.admin.catalogo.application.update;
+package com.amorim.dev.admin.catalogo.application.category.update;
 
 import com.amorim.dev.admin.catalogo.domain.category.CategoryID;
 

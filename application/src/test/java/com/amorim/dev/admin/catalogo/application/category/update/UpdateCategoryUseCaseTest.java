@@ -1,8 +1,5 @@
 package com.amorim.dev.admin.catalogo.application.category.update;
 
-import com.amorim.dev.admin.catalogo.application.category.create.CreateCategoryCommand;
-import com.amorim.dev.admin.catalogo.application.update.DefaultUpdateCategoryUseCase;
-import com.amorim.dev.admin.catalogo.application.update.UpdateCategoryCommand;
 import com.amorim.dev.admin.catalogo.domain.category.Category;
 import com.amorim.dev.admin.catalogo.domain.category.CategoryGateway;
 import com.amorim.dev.admin.catalogo.domain.category.CategoryID;
